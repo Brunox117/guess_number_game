@@ -11,7 +11,7 @@ class GameView extends StatefulWidget {
 }
 
 class _GameViewState extends State<GameView> {
-  int triesLeft = 5;
+  int triesLeft = 0;
   String currentNumber = '';
   int numberToGuess = 5;
   int maxNumber = 10;
@@ -31,6 +31,7 @@ class _GameViewState extends State<GameView> {
     final random = Random();
     numberToGuess = random.nextInt(maxNumber) + 1;
     print("numberToGuess -> $numberToGuess");
+    triesLeft = 5;
     moreThanList.clear();
     lessThanList.clear();
     setState(() {});
@@ -39,14 +40,7 @@ class _GameViewState extends State<GameView> {
   void onSubmit() {
     int? x = int.tryParse(currentNumber);
     if (x != null) {
-      if (x > numberToGuess) {
-        lessThanList.add(x);
-      } else if (x < numberToGuess) {
-        moreThanList.add(x);
-      } else {
-        winningList.add(x);
-        newGame();
-      }
+      checkNumber(x);
       setState(() {
         errorText = null;
         controller.clear();
@@ -58,6 +52,25 @@ class _GameViewState extends State<GameView> {
         controller.clear();
         currentNumber = '';
       });
+    }
+  }
+
+  void checkNumber(int x) {
+    if (numberToGuess == x) {
+      winningList.add(x);
+      newGame();
+      return;
+    }
+    triesLeft--;
+    if (triesLeft == 0) {
+      print("perdio");
+      newGame();
+    } else {
+      if (x > numberToGuess) {
+        lessThanList.add(x);
+      } else if (x < numberToGuess) {
+        moreThanList.add(x);
+      }
     }
   }
 
