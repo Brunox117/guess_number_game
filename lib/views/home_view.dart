@@ -11,15 +11,17 @@ class GameView extends StatefulWidget {
 class _GameViewState extends State<GameView> {
   int triesLeft = 5;
   String currentNumber = '';
+  int numberToGues = 10;
+  List<int> moreThanList = [];
+  List<int> lessThanList = [];
+  List<int> winningList = [];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Adivina el número')),
-
       body: Padding(
         padding: const EdgeInsets.all(10),
-
         child: Column(
           children: [
             Row(
@@ -46,26 +48,30 @@ class _GameViewState extends State<GameView> {
               ],
             ),
             SizedBox(height: 10),
+            ElevatedButton(
+              onPressed: () {
+                print("currentNumber -> $currentNumber");
+                int? x = int.tryParse(currentNumber);
+                if (x != null) {
+                  if (x > numberToGues) {
+                    lessThanList.add(x);
+                  } else if (x < numberToGues) {
+                    moreThanList.add(x);
+                  } else {
+                    winningList.add(x);
+                  }
+                  setState(() {});
+                }
+              },
+              child: Text("Adivinar"),
+            ),
+            SizedBox(height: 10),
             Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.3,
-                  child: NumbersTable(
-                    numbersToShow: [1, 2, 3, 4],
-                    header: "Mayor que",
-                  ),
-                ),
-                SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.3,
-                  child: NumbersTable(
-                    numbersToShow: [6, 7, 8, 9],
-                    header: "Menor que",
-                  ),
-                ),
-                SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.3,
-                  child: NumbersTable(numbersToShow: [5], header: "Adivinados"),
-                ),
+                NumbersTable(numbersToShow: moreThanList, header: "Mayor que"),
+                NumbersTable(numbersToShow: lessThanList, header: "Menor que"),
+                NumbersTable(numbersToShow: winningList, header: "Adivinados"),
               ],
             ),
           ],
