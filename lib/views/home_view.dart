@@ -2,8 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:guess_number_game/model/winning_numbers.dart';
-import 'package:guess_number_game/widgets/numbers_table.dart';
-import 'package:guess_number_game/widgets/winning_numbers_table.dart';
+import 'package:guess_number_game/widgets/tables_row.dart';
 
 class GameView extends StatefulWidget {
   const GameView({super.key});
@@ -17,6 +16,7 @@ class _GameViewState extends State<GameView> {
   String currentNumber = '';
   int numberToGuess = 5;
   int maxNumber = 10;
+  double sliderValue = 1;
   List<int> moreThanList = [];
   List<int> lessThanList = [];
   List<WinningNumbers> winningList = [];
@@ -117,16 +117,24 @@ class _GameViewState extends State<GameView> {
               child: Text("Adivinar"),
             ),
             SizedBox(height: 10),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                NumbersTable(numbersToShow: moreThanList, header: "Mayor que"),
-                NumbersTable(numbersToShow: lessThanList, header: "Menor que"),
-                WinningNumbersTable(
-                  numbersToShow: winningList,
-                  header: "Adivinados",
-                ),
-              ],
+            Text("Dificultad: Fácil"),
+            Slider(
+              value: sliderValue,
+              min: 1.0,
+              max: 4.0,
+              divisions: 3,
+              onChanged: (value) {
+                print("sliderValue -> $value");
+                setState(() {
+                  sliderValue = value;
+                });
+              },
+            ),
+            SizedBox(height: 10),
+            TablesRow(
+              moreThanList: moreThanList,
+              lessThanList: lessThanList,
+              winningList: winningList,
             ),
           ],
         ),
