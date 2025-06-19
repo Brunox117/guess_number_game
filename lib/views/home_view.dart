@@ -1,7 +1,9 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:guess_number_game/model/winning_numbers.dart';
 import 'package:guess_number_game/widgets/numbers_table.dart';
+import 'package:guess_number_game/widgets/winning_numbers_table.dart';
 
 class GameView extends StatefulWidget {
   const GameView({super.key});
@@ -17,7 +19,7 @@ class _GameViewState extends State<GameView> {
   int maxNumber = 10;
   List<int> moreThanList = [];
   List<int> lessThanList = [];
-  List<int> winningList = [];
+  List<WinningNumbers> winningList = [];
   TextEditingController controller = TextEditingController();
   String? errorText;
 
@@ -57,13 +59,13 @@ class _GameViewState extends State<GameView> {
 
   void checkNumber(int x) {
     if (numberToGuess == x) {
-      winningList.add(x);
+      winningList.add(WinningNumbers(winningNumber: x, isWinner: true));
       newGame();
       return;
     }
     triesLeft--;
     if (triesLeft == 0) {
-      print("perdio");
+      winningList.add(WinningNumbers(winningNumber: x, isWinner: false));
       newGame();
     } else {
       if (x > numberToGuess) {
@@ -86,6 +88,7 @@ class _GameViewState extends State<GameView> {
               children: [
                 Expanded(
                   child: TextField(
+                    onTapOutside: (_) => FocusScope.of(context).unfocus(),
                     controller: controller,
                     decoration: InputDecoration(
                       labelText: "Ingresa un número",
@@ -119,7 +122,10 @@ class _GameViewState extends State<GameView> {
               children: [
                 NumbersTable(numbersToShow: moreThanList, header: "Mayor que"),
                 NumbersTable(numbersToShow: lessThanList, header: "Menor que"),
-                NumbersTable(numbersToShow: winningList, header: "Adivinados"),
+                WinningNumbersTable(
+                  numbersToShow: winningList,
+                  header: "Adivinados",
+                ),
               ],
             ),
           ],
