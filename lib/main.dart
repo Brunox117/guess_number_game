@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:guess_number_game/views/home_view.dart';
 
 void main() {
   runApp(const MainApp());
@@ -9,12 +10,12 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: Scaffold(
-        body: Center(
-          child: Text('Hello World!'),
-        ),
+    return MaterialApp(
+      theme: ThemeData(
+        colorSchemeSeed: Colors.blue,
+        brightness: Brightness.dark,
       ),
+      home: GameView(),
     );
   }
 }
