@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:guess_number_game/widgets/numbers_table.dart';
 
@@ -11,23 +13,39 @@ class GameView extends StatefulWidget {
 class _GameViewState extends State<GameView> {
   int triesLeft = 5;
   String currentNumber = '';
-  int numberToGues = 5;
+  int numberToGuess = 5;
+  int maxNumber = 10;
   List<int> moreThanList = [];
   List<int> lessThanList = [];
   List<int> winningList = [];
   TextEditingController controller = TextEditingController();
   String? errorText;
 
+  @override
+  void initState() {
+    super.initState();
+    newGame();
+  }
+
+  void newGame() {
+    final random = Random();
+    numberToGuess = random.nextInt(maxNumber) + 1;
+    print("numberToGuess -> $numberToGuess");
+    moreThanList.clear();
+    lessThanList.clear();
+    setState(() {});
+  }
+
   void onSubmit() {
-    print("currentNumber -> $currentNumber");
     int? x = int.tryParse(currentNumber);
     if (x != null) {
-      if (x > numberToGues) {
+      if (x > numberToGuess) {
         lessThanList.add(x);
-      } else if (x < numberToGues) {
+      } else if (x < numberToGuess) {
         moreThanList.add(x);
       } else {
         winningList.add(x);
+        newGame();
       }
       setState(() {
         errorText = null;
