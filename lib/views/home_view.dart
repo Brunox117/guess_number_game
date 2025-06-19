@@ -11,10 +11,37 @@ class GameView extends StatefulWidget {
 class _GameViewState extends State<GameView> {
   int triesLeft = 5;
   String currentNumber = '';
-  int numberToGues = 10;
+  int numberToGues = 5;
   List<int> moreThanList = [];
   List<int> lessThanList = [];
   List<int> winningList = [];
+  TextEditingController controller = TextEditingController();
+  String? errorText;
+
+  void onSubmit() {
+    print("currentNumber -> $currentNumber");
+    int? x = int.tryParse(currentNumber);
+    if (x != null) {
+      if (x > numberToGues) {
+        lessThanList.add(x);
+      } else if (x < numberToGues) {
+        moreThanList.add(x);
+      } else {
+        winningList.add(x);
+      }
+      setState(() {
+        errorText = null;
+        controller.clear();
+        currentNumber = '';
+      });
+    } else {
+      setState(() {
+        errorText = "Porfavor, ingresa un número";
+        controller.clear();
+        currentNumber = '';
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,14 +55,17 @@ class _GameViewState extends State<GameView> {
               children: [
                 Expanded(
                   child: TextField(
+                    controller: controller,
                     decoration: InputDecoration(
                       labelText: "Ingresa un número",
                       border: OutlineInputBorder(),
+                      errorText: errorText,
                     ),
                     keyboardType: TextInputType.number,
                     onChanged: (value) {
                       currentNumber = value;
                     },
+                    onSubmitted: (_) => onSubmit(),
                   ),
                 ),
                 const SizedBox(width: 30),
@@ -49,20 +79,7 @@ class _GameViewState extends State<GameView> {
             ),
             SizedBox(height: 10),
             ElevatedButton(
-              onPressed: () {
-                print("currentNumber -> $currentNumber");
-                int? x = int.tryParse(currentNumber);
-                if (x != null) {
-                  if (x > numberToGues) {
-                    lessThanList.add(x);
-                  } else if (x < numberToGues) {
-                    moreThanList.add(x);
-                  } else {
-                    winningList.add(x);
-                  }
-                  setState(() {});
-                }
-              },
+              onPressed: () => onSubmit(),
               child: Text("Adivinar"),
             ),
             SizedBox(height: 10),
