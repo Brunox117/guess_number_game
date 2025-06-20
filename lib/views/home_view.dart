@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:guess_number_game/model/winning_numbers.dart';
 import 'package:guess_number_game/widgets/tables_row.dart';
 
@@ -14,6 +15,7 @@ class GameView extends StatefulWidget {
 class _GameViewState extends State<GameView> {
   int triesLeft = 0;
   String currentNumber = '';
+  String difficultyText = 'Fácil';
   int numberToGuess = 5;
   int maxNumber = 10;
   double sliderValue = 1;
@@ -31,9 +33,23 @@ class _GameViewState extends State<GameView> {
 
   void newGame() {
     final random = Random();
-    numberToGuess = random.nextInt(maxNumber) + 1;
-    print("numberToGuess -> $numberToGuess");
-    triesLeft = 5;
+    if (sliderValue == 1) {
+      numberToGuess = random.nextInt(10) + 1;
+      triesLeft = 5;
+      difficultyText = 'Fácil';
+    } else if (sliderValue == 2) {
+      numberToGuess = random.nextInt(20) + 1;
+      triesLeft = 8;
+      difficultyText = 'Medio';
+    } else if (sliderValue == 3) {
+      numberToGuess = random.nextInt(100) + 1;
+      triesLeft = 15;
+      difficultyText = 'Avanzado';
+    } else if (sliderValue == 4) {
+      numberToGuess = random.nextInt(1000) + 1;
+      triesLeft = 25;
+      difficultyText = 'Extremo';
+    }
     moreThanList.clear();
     lessThanList.clear();
     setState(() {});
@@ -95,6 +111,7 @@ class _GameViewState extends State<GameView> {
                       border: OutlineInputBorder(),
                       errorText: errorText,
                     ),
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                     keyboardType: TextInputType.number,
                     onChanged: (value) {
                       currentNumber = value;
@@ -117,16 +134,16 @@ class _GameViewState extends State<GameView> {
               child: Text("Adivinar"),
             ),
             SizedBox(height: 10),
-            Text("Dificultad: Fácil"),
+            Text("Dificultad: $difficultyText"),
             Slider(
               value: sliderValue,
               min: 1.0,
               max: 4.0,
               divisions: 3,
               onChanged: (value) {
-                print("sliderValue -> $value");
                 setState(() {
                   sliderValue = value;
+                  newGame();
                 });
               },
             ),
