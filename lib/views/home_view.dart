@@ -15,15 +15,21 @@ class GameView extends StatefulWidget {
 class _GameViewState extends State<GameView> {
   int triesLeft = 0;
   String currentNumber = '';
-  String difficultyText = 'Fácil';
   int numberToGuess = 5;
-  int maxNumber = 10;
   double sliderValue = 1;
   List<int> moreThanList = [];
   List<int> lessThanList = [];
+  bool showHint = false;
   List<WinningNumbers> winningList = [];
   TextEditingController controller = TextEditingController();
   String? errorText;
+
+  static const Map<int, Map<String, dynamic>> difficultyConfig = {
+    1: {'maxNumber': 10, 'tries': 5, 'difficulty': 'Fácil'},
+    2: {'maxNumber': 20, 'tries': 8, 'difficulty': 'Medio'},
+    3: {'maxNumber': 100, 'tries': 15, 'difficulty': 'Avanzado'},
+    4: {'maxNumber': 1000, 'tries': 25, 'difficulty': 'Extremo'},
+  };
 
   @override
   void initState() {
@@ -32,24 +38,10 @@ class _GameViewState extends State<GameView> {
   }
 
   void newGame() {
+    final config = difficultyConfig[sliderValue.toInt()]!;
     final random = Random();
-    if (sliderValue == 1) {
-      numberToGuess = random.nextInt(10) + 1;
-      triesLeft = 5;
-      difficultyText = 'Fácil';
-    } else if (sliderValue == 2) {
-      numberToGuess = random.nextInt(20) + 1;
-      triesLeft = 8;
-      difficultyText = 'Medio';
-    } else if (sliderValue == 3) {
-      numberToGuess = random.nextInt(100) + 1;
-      triesLeft = 15;
-      difficultyText = 'Avanzado';
-    } else if (sliderValue == 4) {
-      numberToGuess = random.nextInt(1000) + 1;
-      triesLeft = 25;
-      difficultyText = 'Extremo';
-    }
+    numberToGuess = random.nextInt(config['maxNumber']!) + 1;
+    triesLeft = config['tries']!;
     moreThanList.clear();
     lessThanList.clear();
     setState(() {});
@@ -134,7 +126,9 @@ class _GameViewState extends State<GameView> {
               child: Text("Adivinar"),
             ),
             SizedBox(height: 10),
-            Text("Dificultad: $difficultyText"),
+            Text(
+              "Dificultad: ${difficultyConfig[sliderValue.toInt()]?['difficulty']}",
+            ),
             Slider(
               value: sliderValue,
               min: 1.0,
@@ -147,6 +141,29 @@ class _GameViewState extends State<GameView> {
                 });
               },
             ),
+            const SizedBox(height: 10),
+            IconButton(
+              onPressed: () {
+                setState(() {
+                  showHint = !showHint;
+                });
+              },
+              icon: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text("Mostrar pista"),
+                  SizedBox(width: 10),
+                  (showHint)
+                      ? Icon(Icons.remove_red_eye)
+                      : Icon(Icons.visibility_off),
+                ],
+              ),
+            ),
+            (showHint)
+                ? Text(
+                  "Número del 1 al ${difficultyConfig[sliderValue.toInt()]?['maxNumber']}",
+                )
+                : SizedBox(),
             SizedBox(height: 10),
             TablesRow(
               moreThanList: moreThanList,
